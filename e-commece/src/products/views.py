@@ -10,6 +10,7 @@ from django.utils import timezone
 from .models import Product, Variation, Category
 from .forms import VariationInventoryFormSet
 from .mixins import StaffRequiredMixin, LoginRequiredMixin
+import random
 
 
 class CategoryListView(ListView):
@@ -95,7 +96,7 @@ class ProductListView(ListView):
 
         return queryset
 
-import random
+
 class ProductDetailView(DetailView):
     model = Product
 
@@ -104,7 +105,7 @@ class ProductDetailView(DetailView):
     def get_context_data(self, *args, **kwargs):
         context = super(ProductDetailView, self).get_context_data(*args, **kwargs)
         instance = self.get_object()
-        #order_by('-title")
+        # order_by('-title")
         context['related'] = sorted(Product.objects.get_related(instance)[:6], key=lambda x: random.random())
         return context
 
