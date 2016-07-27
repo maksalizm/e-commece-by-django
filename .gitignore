@@ -90,10 +90,12 @@ ENV/
 
 *.pyc
 
-*.pyc
-
-*.8
-
-*.8
 
 *.xml
+
+
+migrations/
+
+db.sqlite3
+
+
