@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.core.urlresolvers import reverse
 from products.models import Variation
 
 
@@ -12,6 +13,9 @@ class CartItem(models.Model):
 
     def __unicode__(self):
         return self.item.title
+
+    def remove(self):
+        return self.item.remove_from_cart()
 
 
 class Cart(models.Model):
