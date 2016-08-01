@@ -10,6 +10,7 @@ class CartItem(models.Model):
     cart = models.ForeignKey("Cart")
     item = models.ForeignKey(Variation)
     quantity = models.PositiveIntegerField(default=1)
+    line_item_total = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __unicode__(self):
         return self.item.title

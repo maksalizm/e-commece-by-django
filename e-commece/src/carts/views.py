@@ -2,15 +2,16 @@ from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import render, get_object_or_404
 from django.views.generic.base import View
 from django.views.generic.detail import SingleObjectMixin
-
+from django.db.models.signals import pre_save
+from decimal import Decimal
 # Create your views here.
 
 from products.models import Variation
 from carts.models import Cart, CartItem
 
 
-class CartView(SingleObjectMixin, View):
-    model = Cart
+class CartView(SingleObjectMixin, View):A
+    model = Cart 
     template_name = "carts/view.html"
 
     def get_object(self, *args, **kwargs):
@@ -34,7 +35,7 @@ class CartView(SingleObjectMixin, View):
         if item_id:
             item_instance = get_object_or_404(Variation, id=item_id)
             qty = request.GET.get("qty", 1)
-            try :
+            try:
                 if int(qty) < 1:
                     delete_item = True
             except:
@@ -51,3 +52,13 @@ class CartView(SingleObjectMixin, View):
         }
         template = self.template_name
         return render(request, template, context)
+
+
+def cart_item_pre_save_receiver(sender, instance, *args, **kwargs):
+    qty = instance.quantity
+    if qty >=1:
+        price = instance.item.get_price()
+        line_item_total = Decimal(qty) * price
+        instance.line_item_total = line_item_total
+
+pre_save.connect(cart_item_pre_save_receiver, sender=CartItem)
