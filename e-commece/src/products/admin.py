@@ -9,10 +9,12 @@ class ProductImageInline(admin.TabularInline):
     extra = 0
     max_num = 10
 
+
 class VariationInline(admin.TabularInline):
     model = Variation
     extra = 0
     max_num = 10
+
 
 class ProductAdmin(admin.ModelAdmin):
     list_display = ['__unicode__', 'price']
@@ -27,7 +29,7 @@ class ProductAdmin(admin.ModelAdmin):
 
 admin.site.register(Product, ProductAdmin)
 
-#admin.site.register(Variation)
+# admin.site.register(Variation)
 
 admin.site.register(ProductImage)
 

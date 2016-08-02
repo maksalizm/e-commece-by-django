@@ -12,12 +12,29 @@
                 $("#price").html(price);
             }
         }
-        setPrice()
+        setPrice();
         $(".variation_select").change(function () {
-            setPrice()
+            setPrice();
             // var img = $(".variation_select option:selected").attr("data-img")
             // $("img").attr("src", img);
-        })
+        });
+        $("#submit-btn").click(function (event) {
+            event.preventDefault();
+            var formData = $("#add-form").serialize();
+            $.ajax({
+                type: "GET",
+                url: "{% url 'cart' %}",
+                data: formData,
+                success: function (data) {
+                    $("#jquery-message").text("Added "+ data.item_added+ " Deleted " + data.deleted)
+                },
+                error: function(response, error){
+{#                    console.log(response);#}
+{#                    console.log(error);#}
+                    $("#add-form").submit()
+                }
+            })
+        });
     {% endblock %}
 </script>
 
@@ -45,7 +62,8 @@
         <!-- Product Sidebar -->
         <div class='col-sm-4'>
 
-            <form method="GET" action="{% url 'cart' %}">
+            <form id="add-form" method="GET" action="{% url 'cart' %}">
+                <p id="jquery-message" class="lead"></p>
                 {% if object.variation_set.count > 1 %}
                     <h3 id='price'>{{ object.variation_set.first.price }}</h3>
                     <select name="item" class='form-control variation_select'>
@@ -69,7 +87,7 @@
                 <br/>
                 <input class="form-control" type="number" name="qty" value="1"/>
                 <br/>
-                <input type="submit" class="btn btn-default" value="Add to Cart">
+                <input id="submit-btn" type="submit" class="btn btn-default" value="Add to Cart">
             </form>
             <br/>
             <hr/>
