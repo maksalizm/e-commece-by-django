@@ -32,6 +32,7 @@ class CartView(SingleObjectMixin, View):
         item_id = request.GET.get("item")
         delete_item = request.GET.get("delete", False)
         item_added = False
+        flash_message = ""
         if item_id:
             item_instance = get_object_or_404(Variation, id=item_id)
             qty = request.GET.get("qty", 1)
@@ -42,10 +43,14 @@ class CartView(SingleObjectMixin, View):
                 raise Http404
             cart_item, created = CartItem.objects.get_or_create(cart=cart, item=item_instance)
             if created:
+                flash_message = "Successfully added to the cart"
                 item_added = True
             if delete_item:
+                flash_message = "Item removed successfully."
                 cart_item.delete()
             else:
+                if not created:
+                    flash_message = "Quantity has been updated successfully."
                 cart_item.quantity = qty
                 cart_item.save()
             if not request.is_ajax():
@@ -61,11 +66,17 @@ class CartView(SingleObjectMixin, View):
                 subtotal = cart_item.cart.subtotal
             except:
                 subtotal = None
+            try:
+                total_item = cart_item.cart.items.count()
+            except:
+                total_item = 0
             data = {
                 "deleted": delete_item,
                 "item_added": item_added,
                 "line_total": total,
                 "subtotal": subtotal,
+                "flash_message": flash_message,
+                "total_item": total_item,
             }
             return JsonResponse(data)
 
@@ -74,3 +85,18 @@ class CartView(SingleObjectMixin, View):
         }
         template = self.template_name
         return render(request, template, context)
+
+
+class ItemCountView(View):
+    def get(self, request, *args, **kwargs):
+        if request.is_ajax():
+            cart_id = self.request.session.get("cart_id")
+            if cart_id == None:
+                count = 0
+            else:
+                cart = Cart.objects.get(id=cart_id)
+                count = cart.items.count()
+            request.session["cart_item_count"] = count
+            return JsonResponse({"count": count})
+        else:
+            raise Http404

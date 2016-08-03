@@ -3,12 +3,12 @@
 <script>
     {% block jquery %}
         $('.item-qty').change(function () {
-{#            $(this).next('.btn-update').fadeIn();#}
-                        event.preventDefault();
+            {#            $(this).next('.btn-update').fadeIn();#}
+            event.preventDefault();
             var item = $(this).prev("input[type='hidden']").val();
             var qty = $(this).val();
             var data = {
-                item : item,
+                item: item,
                 qty: qty
             };
             $.ajax({
@@ -16,17 +16,25 @@
                 url: "{% url 'cart' %}",
                 data: data,
                 success: function (data) {
-                    $("#jquery-message").text("Added "+ data.item_added+ " Deleted " + data.deleted);
-                    if(data.deleted){
-                        $("#item-"+item).fadeOut();
+                    if (data.deleted) {
+                        $("#item-" + item).fadeOut();
+                        $("#subtotal").text("Subtotal: " + data.subtotal);
                     } else {
-                        $("#item-line-total-"+item).text(data.line_total);
-                        $("#subtotal").text(data.subtotal);
+                        $("#item-line-total-" + item).text(data.line_total);
+                        $("#subtotal").text("Subtotal: " + data.subtotal);
                     }
+                    console.log(data.flash_message);
+                    showFlashMessage(data.flash_message);
+                    if(data.total_items == 0){
+                        var template = '{% include "carts/empty_cart.html" %}';
+                        $(".table").fadeOut();
+                        $(".main-content").html(template);
+                    }
+                    updateCartItemCount();
                 },
-                error: function(response, error){
-{#                    console.log(response);#}
-{#                    console.log(error);#}
+                error: function (response, error) {
+                    {#                    console.log(response);#}
+                    {#                    console.log(error);#}
                     $("#add-form").submit()
                 }
             })
@@ -34,24 +42,32 @@
     {% endblock %}
 </script>
 {% block content %}
-    <table class="table">
-        {% for item in object.cartitem_set.all %}
-            <tr id="item-{{item.item.id }}">
-                <td>{{ item.item.get_title }}</td>
-                <td>
-                    <form action="." method="GET">
-                        <input type="hidden" name="item" value="{{ item.item.id }}">
-                        <input type="number" class="item-qty" name="qty" value="{{ item.quantity }}">
-                        <input type="submit" class="btn-update btn btn-link" value="Update item" style="display:none;">
-                    </form>
-                </td>
-                <td id="item-line-total-{{ item.item.id }}">{{ item.line_item_total }}</td>
-                <td class="text-right"><a href="{{ item.remove }}">X</a>
-                </td>
-            </tr>
-        {% endfor %}
-        <tr>
-            <td colspan="4" class="text-right" id="subtotal">Subtotal: {{ object.subtotal }}</td>
-        </tr>
-    </table>
+    <div class="row main-content">
+        {% if object.cartitem_set.count < 1 %}
+            {% include "carts/empty_cart.html" %}
+        {% else %}
+            <table class="table">
+                {% for item in object.cartitem_set.all %}
+                    <tr id="item-{{ item.item.id }}">
+                        <td>{{ item.item.get_title }}</td>
+                        <td>
+                            <form action="." method="GET">
+                                <input type="hidden" name="item" value="{{ item.item.id }}">
+                                <input type="number" class="item-qty" name="qty" value="{{ item.quantity }}">
+                                <input type="submit" class="btn-update btn btn-link" value="Update item"
+                                       style="display:none;">
+                            </form>
+                        </td>
+                        <td id="item-line-total-{{ item.item.id }}">{{ item.line_item_total }}</td>
+                        <td class="text-right">
+                            <a href="{{ item.remove }}">X</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                <tr>
+                    <td colspan="4" class="text-right" id="subtotal">Subtotal: {{ object.subtotal }}</td>
+                </tr>
+            </table>
+        {% endif %}
+    </div>
 {% endblock %}

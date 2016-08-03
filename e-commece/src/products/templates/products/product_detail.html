@@ -1,6 +1,5 @@
 {% extends "base.html" %}
 
-
 <script>
     {% block jquery %}
         function setPrice() {
@@ -12,6 +11,7 @@
                 $("#price").html(price);
             }
         }
+
         setPrice();
         $(".variation_select").change(function () {
             setPrice();
@@ -26,11 +26,12 @@
                 url: "{% url 'cart' %}",
                 data: formData,
                 success: function (data) {
-                    $("#jquery-message").text("Added "+ data.item_added+ " Deleted " + data.deleted)
+                    showFlashMessage(data.flash_message);
+                    updateCartItemCount();
                 },
-                error: function(response, error){
-{#                    console.log(response);#}
-{#                    console.log(error);#}
+                error: function (response, error) {
+                    {#                    console.log(response);#}
+                    {#                    console.log(error);#}
                     $("#add-form").submit()
                 }
             })
