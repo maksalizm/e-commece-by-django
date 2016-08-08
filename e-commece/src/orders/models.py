@@ -1,6 +1,6 @@
 from django.db import models
 from django.conf import settings
-
+from carts.models import Cart
 
 # Create your models here.
 class UserCheckout(models.Model):
@@ -29,7 +29,16 @@ class UserAddress(models.Model):
         return self.street
 
 
+class Order(models.Model):
+    cart = models.ForeignKey(Cart)
+    user = models.ForeignKey(UserCheckout)
+    billing_address = models.ForeignKey(UserAddress, related_name='billing_address')
+    shipping_address = models.ForeignKey(UserAddress, related_name='shipping_address')
+    shipping_total_price = models.DecimalField(max_digits=50,decimal_places=2,default=5.99)
+    order_total = models.DecimalField(max_digits=50,decimal_places=2)
 
+    def __unicode__(self):
+        return str(self.cart.id)
 # class Order(models.Model):
 # cart
 # usercheckout --> required
