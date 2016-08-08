@@ -59,6 +59,7 @@ INSTALLED_APPS = (
     #my apps
     'carts',
     'products',
+    'orders',
     'newsletter',
 )
 
