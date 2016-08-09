@@ -171,7 +171,7 @@ class CheckoutView(FormMixin, DetailView):
         cart = self.get_object()
         user_checkout_id = request.session.get("user_checkout_id")
         if request.session.get("user_checkout_id") != None:
-            user_checkout = UserCheckOut.objects.get(id=user_checkout_id)
+            user_checkout = UserCheckout.objects.get(id=user_checkout_id)
             billing_address_id = request.session.get("billing_address_id")
             shipping_address_id = request.session.get("shipping_address_id")
 
