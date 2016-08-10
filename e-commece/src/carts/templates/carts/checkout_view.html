@@ -67,10 +67,15 @@
                 <br/>
                 {{ order.shipping_address.get_address }}
             </p>
-            <br/>
             <p>
-                <b>Complete Order</b>
+                <a href="{% url 'order_address' %}">Change an address</a>
             </p>
+            <br/>
+            <form method="POST" action="{% url 'checkout_final' %}">
+                {% csrf_token %}
+                <input type="hidden" name="payment_token" value="ABC">
+                <button type="submit">Complete Order</button>
+            </form>
         </div>
     {% endif %}
 {% endblock %}

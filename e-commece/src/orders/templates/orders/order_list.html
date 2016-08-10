@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <ul class="list-unstyled">
+    {% for object in object_list %}
+        <li>{{ object.id  }} {{ object.cart.items.all }}</li>
+    {% endfor %}
+    </ul>
+{% endblock %}
