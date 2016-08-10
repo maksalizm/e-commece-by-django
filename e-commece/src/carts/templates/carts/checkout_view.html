@@ -26,47 +26,8 @@
             </form>
         </div>
     {% else %}
+        {% include "orders/order_summary_short.html" with order=order %}
         <div class="col-sm-4 col-sm-offset-4 text-center">
-            <p class="lead">
-                Order Summary
-            </p>
-            <table class="table">
-
-                <tr>
-                    <td>
-                        {{ order.cart.cartitem_set.count }} Item(s):<br/>
-                        <ul class="list-unstyled">
-                            {% for item in order.cart.cartitem_set.all %}
-                                <li><b>{{ item.item.get_title }}</b></li>
-                            {% endfor %}
-                        </ul>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Tax: {{ order.cart.tax_total }}</td>
-                </tr>
-                <tr>
-                    <td>Items Total: {{ order.cart.total }}</td>
-                </tr>
-                <tr>
-                    <td>Total Shipping: {{ order.shipping_total_price }}</td>
-                </tr>
-                <tr>
-                    <td>Order Total: {{ order.order_total }}</td>
-                </tr>
-            </table>
-        </div>
-        <div class="col-sm-4 col-sm-offset-4 text-center">
-            <p>
-                <b>Billing to</b>
-                <br/>
-                {{ order.billing_address.get_address }}
-            </p>
-            <p>
-                <b>Shipping to</b>
-                <br/>
-                {{ order.shipping_address.get_address }}
-            </p>
             <p>
                 <a href="{% url 'order_address' %}">Change an address</a>
             </p>
